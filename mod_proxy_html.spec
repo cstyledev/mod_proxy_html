@@ -1,7 +1,7 @@
 Summary: Output filter to rewrite HTML links in a proxy situation
 Name: mod_proxy_html
 Version: 3.1.2
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Libraries
 URL: http://apache.webthing.com/mod_proxy_html/
@@ -25,16 +25,19 @@ an essential component of a reverse proxy.
 
 %build
 %{_sbindir}/apxs -c -I . -I %{_includedir}/libxml2 -lxml2 mod_proxy_html.c
+%{_sbindir}/apxs -c -I . -I %{_includedir}/libxml2 -lxml2 mod_xml2enc.c
 
 
 %install
 %{__rm} -rf %{buildroot}
 %{__mkdir_p} %{buildroot}/%{modulesdir}
 %{_sbindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n mod_proxy_html mod_proxy_html.la
+%{_sbindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n mod_xml2enc mod_xml2enc.la
 install -m 644 -D proxy_html.conf %{buildroot}/%{confdir}.d/proxy_html.conf
 %{__sed} -i \
 	-e '/^# LoadFile	\/usr\/lib\/libxml2\.so/d' \
-	-e '1,7s@^# \(LoadModule	proxy_html_module	modules/mod_proxy_html\.so\)$@\1@' \
+	-e '1,/Windows/s@^# \(LoadModule		*proxy_html_module		*modules/mod_proxy_html\.so\)$@\1@' \
+	-e '1,/Windows/s@^# \(LoadModule		*xml2enc_module		*modules/mod_xml2enc\.so\)$@\1@' \
 %ifarch x86_64
 	-e 's@/usr/lib/@%{_libdir}/@' \
 %endif
@@ -48,11 +51,15 @@ install -m 644 -D proxy_html.conf %{buildroot}/%{confdir}.d/proxy_html.conf
 %files
 %defattr(-,root,root)
 %{modulesdir}/mod_proxy_html.so
+%{modulesdir}/mod_xml2enc.so
 %config(noreplace) %lang(en) %{confdir}.d/proxy_html.conf
 %doc COPYING README
 
 
 %changelog
+* Wed Dec 16 2009 Philip Prindeville <philipp@fedoraproject.org> 3.1.2-6
+- Include mod_xml2enc.  Fix sed script to properly uncomment LoadModule lines.
+
 * Wed Dec 16 2009 Philip Prindeville <philipp@fedoraproject.org> 3.1.2-2
 - Initial commit.
 
