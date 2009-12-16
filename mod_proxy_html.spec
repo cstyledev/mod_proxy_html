@@ -1,7 +1,7 @@
 Summary: Output filter to rewrite HTML links in a proxy situation
 Name: mod_proxy_html
 Version: 3.1.2
-Release: 1%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Libraries
 URL: http://apache.webthing.com/mod_proxy_html/
@@ -53,6 +53,9 @@ install -m 644 -D proxy_html.conf %{buildroot}/%{confdir}.d/proxy_html.conf
 
 
 %changelog
+* Wed Dec 16 2009 Philip Prindeville <philipp@fedoraproject.org> 3.1.2-2
+- Initial commit.
+
 * Wed Dec 09 2009 Philip Prindeville <http://www.redfish-solutions.com> 3.1.2-1
 - Version bump to 3.1.2
 
