@@ -1,7 +1,7 @@
 Summary: Output filter to rewrite HTML links in a proxy situation
 Name: mod_proxy_html
 Version: 3.1.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Libraries
 URL: http://apache.webthing.com/mod_proxy_html/
