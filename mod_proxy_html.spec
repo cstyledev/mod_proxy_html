@@ -1,11 +1,12 @@
 Summary: Output filter to rewrite HTML links in a proxy situation
 Name: mod_proxy_html
 Version: 3.1.2
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Libraries
 URL: http://apache.webthing.com/mod_proxy_html/
 Source: http://apache.webthing.com/mod_proxy_html/mod_proxy_html-%{version}.tar.bz2
+Source1: README.selinux
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires: httpd-mmn = %(cat %{_includedir}/httpd/.mmn || echo missing)
 BuildRequires: libxml2-devel httpd-devel
@@ -30,7 +31,7 @@ an essential component of a reverse proxy.
 
 %install
 %{__rm} -rf %{buildroot}
-%{__mkdir_p} %{buildroot}/%{modulesdir}
+%{__mkdir_p} %{buildroot}/%{modulesdir} %{buildroot}/%{_docdir}/%{name}-%{version}
 %{_sbindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n mod_proxy_html mod_proxy_html.la
 %{_sbindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n mod_xml2enc mod_xml2enc.la
 install -m 644 -D proxy_html.conf %{buildroot}/%{confdir}.d/proxy_html.conf
@@ -43,6 +44,8 @@ install -m 644 -D proxy_html.conf %{buildroot}/%{confdir}.d/proxy_html.conf
 %endif
 	%{buildroot}/%{confdir}.d/proxy_html.conf
 
+install -m 444 -D %{SOURCE1} %{buildroot}/%{_docdir}/%{name}-%{version}/
+
 
 %clean
 %{__rm} -rf %{buildroot}
@@ -54,9 +57,13 @@ install -m 644 -D proxy_html.conf %{buildroot}/%{confdir}.d/proxy_html.conf
 %{modulesdir}/mod_xml2enc.so
 %config(noreplace) %lang(en) %{confdir}.d/proxy_html.conf
 %doc COPYING README
+%doc %{_docdir}/%{name}-%{version}/README.selinux
 
 
 %changelog
+* Sat Jan 28 2012 Philip Prindeville <philipp@fedoraproject.org> - 3.1.2-9
+- Add README about settings required for running under selinux.
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.2-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
