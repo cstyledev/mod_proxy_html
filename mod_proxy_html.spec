@@ -1,14 +1,14 @@
 Summary: Output filter to rewrite HTML links in a proxy situation
 Name: mod_proxy_html
 Version: 3.1.2
-Release: 9%{?dist}
+Release: 9%{?dist}.1
 License: GPLv2
 Group: System Environment/Libraries
 URL: http://apache.webthing.com/mod_proxy_html/
 Source: http://apache.webthing.com/mod_proxy_html/mod_proxy_html-%{version}.tar.bz2
 Source1: README.selinux
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-Requires: httpd-mmn = %(cat %{_includedir}/httpd/.mmn || echo missing)
+Requires: httpd
 BuildRequires: libxml2-devel httpd-devel
 
 %description
@@ -61,6 +61,9 @@ install -m 444 -D %{SOURCE1} %{buildroot}/%{_docdir}/%{name}-%{version}/
 
 
 %changelog
+* Tue Mar 27 2012 Jon Ciesla <limburgher@gmail.com> - 3.1.2-9.1
+- Requires fix.
+
 * Sat Jan 28 2012 Philip Prindeville <philipp@fedoraproject.org> - 3.1.2-9
 - Add README about settings required for running under selinux.
 
