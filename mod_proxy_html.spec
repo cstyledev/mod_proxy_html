@@ -1,7 +1,7 @@
 Summary: Output filter to rewrite HTML links in a proxy situation
 Name: mod_proxy_html
 Version: 3.1.2
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Libraries
 URL: http://apache.webthing.com/mod_proxy_html/
@@ -44,7 +44,7 @@ install -m 644 -D proxy_html.conf %{buildroot}/%{confdir}.d/proxy_html.conf
 %endif
 	%{buildroot}/%{confdir}.d/proxy_html.conf
 
-install -m 444 -D %{SOURCE1} %{buildroot}/%{_docdir}/%{name}-%{version}/
+cp %{SOURCE1} .
 
 
 %clean
@@ -56,8 +56,7 @@ install -m 444 -D %{SOURCE1} %{buildroot}/%{_docdir}/%{name}-%{version}/
 %{modulesdir}/mod_proxy_html.so
 %{modulesdir}/mod_xml2enc.so
 %config(noreplace) %lang(en) %{confdir}.d/proxy_html.conf
-%doc COPYING README
-%doc %{_docdir}/%{name}-%{version}/README.selinux
+%doc COPYING README README.selinux
 
 
 %changelog
