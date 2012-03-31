@@ -44,7 +44,7 @@ install -m 644 -D proxy_html.conf %{buildroot}/%{confdir}.d/proxy_html.conf
 %endif
 	%{buildroot}/%{confdir}.d/proxy_html.conf
 
-cp %{SOURCE1} .
+cp -a %{SOURCE1} .
 
 
 %clean
