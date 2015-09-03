@@ -1,11 +1,12 @@
 Summary: Output filter to rewrite HTML links in a proxy situation
 Name: mod_proxy_html
 Version: 3.1.2
-Release: 6%{?dist}
+Release: 6%{?dist}.cs
 License: GPLv2
 Group: System Environment/Libraries
 URL: http://apache.webthing.com/mod_proxy_html/
 Source: http://apache.webthing.com/mod_proxy_html/mod_proxy_html-%{version}.tar.bz2
+Patch: mod_proxy_html-3.1.2.doctype.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires: httpd-mmn = %(cat %{_includedir}/httpd/.mmn || echo missing)
 BuildRequires: libxml2-devel httpd-devel
@@ -21,6 +22,7 @@ an essential component of a reverse proxy.
 
 %prep
 %setup -q -n %{name}
+%patch -p1 -b .doctype
 
 
 %build

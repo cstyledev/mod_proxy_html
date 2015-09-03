@@ -1,0 +1,61 @@
+--- mod_proxy_html/mod_proxy_html.c	2015-09-03 09:59:57.000000000 +0900
++++ mod_proxy_html/mod_proxy_html.c	2015-09-03 10:07:00.683856885 +0900
+@@ -148,6 +148,7 @@
+ typedef struct {
+   ap_filter_t* f ;
+   proxy_html_conf* cfg ;
++  const char *etag;
+   htmlParserCtxtPtr parser ;
+   apr_bucket_brigade* bb ;
+   char* buf ;
+@@ -313,6 +314,25 @@
+   }
+   AP_fwrite(ctx, ctx->buf, strlen(ctx->buf), 1) ;
+ }
++
++static void pinternalSubset(void* ctxt, const xmlChar *name, const xmlChar *externalID, const xmlChar *sysID)
++{
++    if (!ctxt) return;
++    if (!name) return;
++    saxctxt* ctx = (saxctxt*) ctxt;
++    if (ctx->cfg->doctype && ctx->cfg->doctype[0]) return;
++    ap_fprintf(ctx->f->next, ctx->bb, "<!DOCTYPE %s", (const char *)name);
++    if (externalID) {
++        if ((strcasecmp((const char*)name, "html") == 0) &&
++            (strncasecmp((const char *)externalID, "-//W3C//DTD XHTML ", 18) == 0))
++            ctx->etag = xhtml_etag;
++        ap_fprintf(ctx->f->next, ctx->bb, " PUBLIC \"%s\"", (const char *)externalID);
++    if (sysID)
++        ap_fprintf(ctx->f->next, ctx->bb, " \"%s\"", (const char *)sysID);
++    }
++    ap_fprintf(ctx->f->next, ctx->bb, ">\n");
++}
++
+ static void pcdata(void* ctxt, const xmlChar *uchars, int length) {
+   const char* chars = (const char*) uchars;
+   saxctxt* ctx = (saxctxt*) ctxt ;
+@@ -628,7 +648,7 @@
+   }
+   ctx->offset = 0 ;
+   if ( desc && desc->empty )
+-    ap_fputs(ctx->f->next, ctx->bb, ctx->cfg->etag) ;
++    ap_fputs(ctx->f->next, ctx->bb, ctx->etag) ;
+   else
+     ap_fputc(ctx->f->next, ctx->bb, '>') ;
+ 
+@@ -831,6 +851,7 @@
+     fctx->f = f ;
+     fctx->bb = apr_brigade_create(f->r->pool, f->r->connection->bucket_alloc) ;
+     fctx->cfg = cfg;
++    fctx->etag = cfg->etag;
+     apr_table_unset(f->r->headers_out, "Content-Length") ;
+ 
+     if (cfg->interp)
+@@ -1212,6 +1233,7 @@
+   sax.characters = pcharacters ;
+   sax.comment = pcomment ;
+   sax.cdataBlock = pcdata ;
++  sax.internalSubset = pinternalSubset ;
+   xml2enc_charset = APR_RETRIEVE_OPTIONAL_FN(xml2enc_charset);
+   xml2enc_filter = APR_RETRIEVE_OPTIONAL_FN(xml2enc_filter);
+   if (!xml2enc_charset) {
